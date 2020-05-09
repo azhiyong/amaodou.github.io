@@ -1,19 +1,21 @@
 ---
 title: Tomcat笔记
 date: 2020-05-08 23:28:27
-tags:
+tags: Tomcat
 ---
+## Tomcat 整体结构
+
 ![Tomcat](/images/tomcat体系结构.png)
 
-#### Server
+### Server
   
 一个Server可以包含多个Service
 
-##### Service
+#### Service
   
 一个Service由多个Connector和一个Container组成，可以包含共享的线程池
 
-###### Connector
+##### Connector
 
 Tomcat的连接器，负责接收请求，并将请求交给Container处理
 
@@ -33,7 +35,7 @@ Tomcat的连接器，负责接收请求，并将请求交给Container处理
   
   实现类CoyoteAdapter，将不同协议的请求内容适配成标准的HttpServletRequest和HttpServletResponse，再交给Container处理
 
-###### Container
+##### Container
   
 Servlet容器，负责加载和管理Servlet，将请求交给具体的Servlet处理
 
@@ -53,10 +55,10 @@ Servlet容器，负责加载和管理Servlet，将请求交给具体的Servlet�
   
   表示一个Servlet，最终调用Servlet.service方法
 
-#### Tomcat启动流程
+### Tomcat启动流程
 
 ![Tomcat启动流程](/images/tomcat启动流程.png)
 
-#### Tomcat请求处理流程
+### Tomcat请求处理流程
 
 ![Tomcat请求处理流程](/images/tomcat请求处理流程.png)

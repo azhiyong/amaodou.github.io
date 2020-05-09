@@ -1,13 +1,15 @@
 ---
-title: DispatchServlet请求处理流程解析
+title: DispatcherServlet请求处理流程解析
 date: 2020-05-09 11:00:32
 tags:
+- Java
+- Spring MVC
 ---
-![Spring DispatchServlet](/images/DispatchServlet.png)
+## DispatcherServlet 继承关系
 
-## 以 GET 方法说明
+![Spring DispatcherServlet](/images/DispatcherServlet.png)
 
-### org.springframework.web.servlet.FrameworkServlet
+### FrameworkServlet
 
 ```java
 protected final void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -41,9 +43,9 @@ protected final void processRequest(HttpServletRequest request, HttpServletRespo
 }
 ```
 
-### 下面分析 FrameworkServlet 的实现类 DispatcherServlet 的 doService 方法
+### DispatcherServlet
 
-#### org.springframework.web.servlet.DispatcherServlet
+DispatcherServlet 实现了 doService方法
 
 ```java
 protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -217,9 +219,9 @@ protected void render(ModelAndView mv, HttpServletRequest request, HttpServletRe
 }
 ```
 
-### 下面解析视图渲染过程，实际是 renderMergedOutputModel 方法进行渲染，这是一个抽象方法，由子类实现
+### AbstractView
 
-#### org.springframework.web.servlet.view.AbstractView
+下面解析视图渲染过程，实际是 renderMergedOutputModel 方法进行渲染，这是一个抽象方法，由子类实现
 
 ```java
 public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -239,9 +241,9 @@ protected abstract void renderMergedOutputModel(
 
 ```
 
-AbstractTemplateView 是 AbstractView 的一个子类，实现了 renderMergedOutputModel 方法
+### AbstractTemplateView
 
-#### org.springframework.web.servlet.view.AbstractTemplateView
+AbstractTemplateView 是 AbstractView 的一个子类，实现了 renderMergedOutputModel 方法
 
 ```java
 protected final void renderMergedOutputModel(
@@ -271,9 +273,9 @@ protected abstract void renderMergedTemplateModel(
             Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
 ```
 
-### 重点来了，这里引出 FreeMarkerView，它是 AbstractTemplateView 的一个子类
+### FreeMarkerView
 
-#### org.springframework.web.servlet.view.freemarker.FreeMarkerView
+FreeMarkerView 是 AbstractTemplateView 的一个子类，负责视图解析
 
 ```java
 protected void renderMergedTemplateModel(
@@ -310,7 +312,7 @@ protected void processTemplate(Template template, SimpleHash model, HttpServletR
 }
 ```
 
-### 接下来就看到 FreeMarker 核心的 API 了，通过 Configuration 创建 template
+接下来就看到 FreeMarker 核心的 API 了，通过 Configuration 创建 template
 
 ```java
 Configuration cfg = new Configuration();

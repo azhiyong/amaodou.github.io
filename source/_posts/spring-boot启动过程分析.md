@@ -2,6 +2,8 @@
 title: Spring Boot启动过程分析
 date: 2020-05-09 11:04:39
 tags:
+- Java
+- Spring Boot
 ---
 ## Spring Boot 应用启动入口
 
