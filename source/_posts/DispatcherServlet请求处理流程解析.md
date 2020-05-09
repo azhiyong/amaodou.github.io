@@ -1,9 +1,7 @@
 ---
 title: DispatcherServlet请求处理流程解析
 date: 2020-05-09 11:00:32
-tags:
-- Java
-- Spring MVC
+tags: "Spring MVC"
 ---
 ## DispatcherServlet 继承关系
 

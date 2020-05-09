@@ -1,7 +1,7 @@
 ---
 title: PXE环境搭建
 date: 2020-05-09 11:01:46
-tags: pxe
+tags: Linux
 ---
 ## 准备环境
 

@@ -1,7 +1,7 @@
 ---
 title: Dynomite快速入门
 date: 2020-05-09 11:02:40
-tags: dynomite
+tags: Dynomite
 ---
 ### Dynomite 是什么
 
