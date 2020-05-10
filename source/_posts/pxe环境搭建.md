@@ -15,6 +15,8 @@ tags: Linux
    | Bridged   | +       | +            | +       | +          | +            |
    | NAT       | +       | Port forward | -       | +          | Port forward |
 
+    <!--more-->
+
 2. 下载 CentOS 7 镜像，如 CentOS-7-x86_64-Minimal-1804.iso
 
 3. 关闭防火墙 `systemctl stop firewalld`

@@ -18,6 +18,7 @@ date: 2020-05-09 18:53:12
   git config --global user.name "amaodou"
   git config --global user.email "amaodou@gmail.com"
   ```
+<!--more-->
 
 - Git 换行符转换
 

@@ -16,6 +16,8 @@ s 存储了字符串对象"abcd"的引用，也可以理解为 s 指向字符串
 
 ![reference new string](/images/reference_new_string.jpeg)
 
+<!--more-->
+
 ### 字符串赋值
 
 ```java

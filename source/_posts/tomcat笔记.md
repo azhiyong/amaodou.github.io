@@ -12,6 +12,8 @@ tags: Tomcat
 
 一个 Server 可以包含多个 Service
 
+<!--more-->
+
 #### Service
 
 一个 Service 由多个 Connector 和一个 Container 组成，可以包含共享的线程池

@@ -10,6 +10,8 @@ Dynomite 是受[Amazon Dynamo][1]白皮书启发，适用于不同存储引擎�
 
 Dynomite 的最终目标是能够在本身不提供高可用和多数据中心复制功能的存储引擎上实现这些功能，并且做到高效、简单、高性能。简单来说就是，Dynomite 可以使非分布式的`Redis`和`Memcached`变成分布式的。
 
+<!--more-->
+
 ### Dynomite 使用
 
 既然 Dynomite 可以简单理解为对 Redis 和 Memcached 的包装，那我们在代码中可以像使用 Redis 或 Memcached 一样使用 Dynomite

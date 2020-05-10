@@ -15,6 +15,8 @@ public class WebApplication {
 }
 ```
 
+<!--more-->
+
 启动入口类有两个关键元素：`@SpringBootApplication`和`SpringApplication::run`
 
 - `@SpringBootApplication`

@@ -19,6 +19,8 @@ usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]
         [-w local_tun[:remote_tun]] [user@]hostname [command]
 ```
 
+<!--more-->
+
 当远程服务器数量增加到很难记住所有服务器的用户名、远程 ip、命令行选项时，我们该怎么办呢？
 
 一般有两种方式处理：创建别名指令和使用 config 配置
