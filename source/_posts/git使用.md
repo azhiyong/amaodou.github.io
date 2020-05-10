@@ -8,97 +8,97 @@ date: 2020-05-09 18:53:12
 
 ### Git 配置
 
-* 配置用户信息
+**添加`--global`参数进行全局配置**
 
-*添加`--global`参数进行全局配置*
-  
-Git 每次提交都会使用这些信息，并且记录到提交中
+- 配置用户信息
 
-```bash
-git config --global user.name "amaodou"
-git config --global user.email "amaodou@gmail.com"
-```
+  Git 每次提交都会使用这些信息，并且记录到提交中
 
-* Git 换行符转换
-  
-不同平台的换行符不一样，为了解决这个问题，Git 可以配置换行自动转换
+  ```bash
+  git config --global user.name "amaodou"
+  git config --global user.email "amaodou@gmail.com"
+  ```
 
-Windows 平台的换行符是 CRLF，Linux 平台的换行符是 LF
+- Git 换行符转换
 
-```bash
-# 提交时换行符转换成 LF，检出时转换成 CRLF （一般 Windowns 平台配置）
-git config --global core.autocrlf true
+  不同平台的换行符不一样，为了解决这个问题，Git 可以配置换行自动转换
 
-# 提交时换行符转换成 LF，检出时不处理
-git config --global core.autocrlf input
+  _Windows 平台的换行符是 CRLF，Linux 平台的换行符是 LF_
 
-# 提交和检出都不处理
-git config --global core.autocrlf false
-```
+  ```bash
+  # 提交时换行符转换成 LF，检出时转换成 CRLF （一般 Windowns 平台配置）
+  git config --global core.autocrlf true
 
-* Git 别名
+  # 提交时换行符转换成 LF，检出时不处理
+  git config --global core.autocrlf input
 
-添加如下配置后，可以使用`git co`代表`git checkout`
+  # 提交和检出都不处理
+  git config --global core.autocrlf false
+  ```
 
-```bash
-git config --global alias.co checkout
-git config --global alias.br branch
-git config --global alias.ci commit
-git config --global alias.st status
-```
+- Git 别名
 
-也可以通过设置别名定义 log 输出格式
+  添加如下配置后，可以使用`git co`代表`git checkout`
 
-```bash
-git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit --date=format:'%Y-%m-%d %H:%M:%S'"
-```
+  ```bash
+  git config --global alias.co checkout
+  git config --global alias.br branch
+  git config --global alias.ci commit
+  git config --global alias.st status
+  ```
+
+  也可以通过设置别名定义 log 输出格式
+
+  ```bash
+  git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit --date=format:'%Y-%m-%d %H:%M:%S'"
+  ```
 
 ### Git 操作
 
-* 初始化 Git 仓库
-  
-```bash
-git init
-```
+- 初始化 Git 仓库
 
-* 将变更添加到缓冲区
-  
-```bash
-git add .
-```
+  ```bash
+  git init
+  ```
 
-* 提交缓冲区的变更
+- 将变更添加到缓冲区
 
-```bash
-git commit -m "说明本次提交内容"
-```
+  ```bash
+  git add .
+  ```
 
-* 拉取远程仓库
+- 提交缓冲区的变更
 
-```bash
-git pull
-```
+  ```bash
+  git commit -m "说明本次提交内容"
+  ```
 
-* 推送到远程仓库
+- 拉取远程仓库
 
-```bash
-git push
-```
+  ```bash
+  git pull
+  ```
 
-如果本地仓库还没有跟远程仓库关联，需要先做关联再推送
+- 推送到远程仓库
 
-```bash
-git remote add origin git@github.com:amaodou/test.git  # 关联远程仓库
-git push -u origin master  # 推送到远程 master 分支
-```
+  ```bash
+  git push
+  ```
 
-如果要推送到远程仓库的其他分支，提交到 draft 分支
+  如果本地仓库还没有跟远程仓库关联，需要先做关联再推送
 
-```bash
-git remote add origin git@github.com:amaodou/test.git
-git checkout draft  # 本地仓库分支 draft
-git push -u origin draft  # 推送到远程 draft 分支
-```
+  ```bash
+  git remote add origin git@github.com:amaodou/test.git  # 关联远程仓库
+  git push -u origin master  # 推送到远程 master 分支
+  ```
+
+  如果要推送到远程仓库的其他分支，提交到 draft 分支
+
+  ```bash
+  git remote add origin git@github.com:amaodou/test.git
+  git checkout draft  # 本地仓库分支 draft
+  git push -u origin draft  # 推送到远程 draft 分支
+  ```
 
 ### Git 多个远程仓库同步
 

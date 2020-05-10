@@ -3,6 +3,7 @@ title: PXE环境搭建
 date: 2020-05-09 11:01:46
 tags: Linux
 ---
+
 ## 准备环境
 
 1. VirtualBox 新建虚拟机安装 CentOS 7 系统，启用网卡 1 选择`网络地址转换(NAT)`连接方式、启用网卡 2 选择`仅Host-Only网络`连接方式（ip 192.168.56.105），VirtualBox 网络模式如下：

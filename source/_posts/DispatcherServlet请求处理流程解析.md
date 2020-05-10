@@ -3,6 +3,7 @@ title: DispatcherServlet请求处理流程解析
 date: 2020-05-09 11:00:32
 tags: "Spring MVC"
 ---
+
 ## DispatcherServlet 继承关系
 
 ![Spring DispatcherServlet](/images/DispatcherServlet.png)
@@ -43,7 +44,7 @@ protected final void processRequest(HttpServletRequest request, HttpServletRespo
 
 ### DispatcherServlet
 
-DispatcherServlet 实现了 doService方法
+DispatcherServlet 实现了 doService 方法
 
 ```java
 protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {

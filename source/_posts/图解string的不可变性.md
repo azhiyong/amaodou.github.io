@@ -3,6 +3,7 @@ title: 图解Java String的不可变性
 date: 2020-05-09 11:07:36
 tags: Java
 ---
+
 翻译自 [What is string immutability](http://www.programcreek.com/2009/02/diagram-to-show-java-strings-immutability/)
 
 ### 定义字符串

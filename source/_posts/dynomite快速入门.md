@@ -3,6 +3,7 @@ title: Dynomite快速入门
 date: 2020-05-09 11:02:40
 tags: Dynomite
 ---
+
 ### Dynomite 是什么
 
 Dynomite 是受[Amazon Dynamo][1]白皮书启发，适用于不同存储引擎和协议的分布式 Dynamo 层的实现，目前已经支持`Redis`和`Memcached`。Dynomite 支持多数据中心复制，为高可用而设计的。
