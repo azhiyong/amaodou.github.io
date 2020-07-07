@@ -20,7 +20,7 @@ Dynomite 的最终目标是能够在本身不提供高可用和多数据中心�
 
 > 以`Redis`作为存储引擎，创建一个单 DC，2 个 Rack，每个 Rack 2 个节点的存储环境，如下：
 
-![Dynomite拓补图](/images/dynomite-topology.png)
+![Dynomite拓补图](/images/dynomite/dynomite-topology.png)
 
 #### 安装配置 Redis
 

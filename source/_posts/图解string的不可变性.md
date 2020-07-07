@@ -14,7 +14,7 @@ String s = "abcd";
 
 s 存储了字符串对象"abcd"的引用，也可以理解为 s 指向字符串对象"abcd"。
 
-![reference new string](/images/reference_new_string.jpeg)
+![reference new string](/images/java/reference_new_string.jpeg)
 
 <!--more-->
 
@@ -26,7 +26,7 @@ String s2 = s;
 
 s2 也存储了字符串对象"abcd"的引用，s 和 s2 都指向字符串对象"abcd"。
 
-![reference string](/images/reference_string.jpeg)
+![reference string](/images/java/reference_string.jpeg)
 
 ### 字符串连接
 
@@ -36,7 +36,7 @@ s = s.concat("ef");
 
 这时 s 存储了一个新的字符串对象的引用，s 指向新的字符串对象"abcdef"。
 
-![update reference](/images/update_reference.jpeg)
+![update reference](/images/java/update_reference.jpeg)
 
 ### 总结
 

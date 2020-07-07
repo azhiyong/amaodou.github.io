@@ -6,7 +6,7 @@ tags: Tomcat
 
 ## Tomcat 整体结构
 
-![Tomcat](/images/tomcat体系结构.png)
+![Tomcat](/images/tomcat/tomcat体系结构.png)
 
 ### Server
 
@@ -60,8 +60,8 @@ Servlet 容器，负责加载和管理 Servlet，将请求交给具体的 Servle
 
 ### Tomcat 启动流程
 
-![Tomcat启动流程](/images/tomcat启动流程.png)
+![Tomcat启动流程](/images/tomcat/tomcat启动流程.png)
 
 ### Tomcat 请求处理流程
 
-![Tomcat请求处理流程](/images/tomcat请求处理流程.png)
+![Tomcat请求处理流程](/images/tomcat/tomcat请求处理流程.png)

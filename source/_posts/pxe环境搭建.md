@@ -178,11 +178,11 @@ systemctl enable dhcpd
 
 1. 配置主机网络管理器，修改 Host-Only 网络适配器，停用 DHCP 服务；
 
-   ![停用DHCP服务](/images/vbox-dhcp.png)
+   ![停用DHCP服务](/images/linux/vbox-dhcp.png)
 
 2. 新建虚拟电脑，内存调整为 2048MB（内存太小会安装失败），调整启动顺序（优先网络启动，不用挂载镜像），启用网卡 1 选择`仅Host-Only网络`连接方式
 
-   ![调整启动顺序](/images/boot-order.png)
-   ![设置网卡](/images/vbox-network.png)
-   ![加载pxelinux文件](/images/load-pxelinux.png)
-   ![菜单项](/images/install-menu.png)
+   ![调整启动顺序](/images/linux/boot-order.png)
+   ![设置网卡](/images/linux/vbox-network.png)
+   ![加载pxelinux文件](/images/linux/load-pxelinux.png)
+   ![菜单项](/images/linux/install-menu.png)

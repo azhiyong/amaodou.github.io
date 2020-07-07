@@ -6,7 +6,7 @@ tags: "Spring MVC"
 
 ## DispatcherServlet 继承关系
 
-![Spring DispatcherServlet](/images/DispatcherServlet.png)
+![Spring DispatcherServlet](/images/spring/DispatcherServlet.png)
 
 <!--more-->
 
