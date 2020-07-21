@@ -71,7 +71,7 @@ PXE 的工作过程
    }
    ```
 
-3. 安装 syslinux-tftpboot，syslinux 中包含 PXE 会使用到的一些文件
+3. 安装 syslinux-tftpboot（syslinux 是一个功能强大的引导加载程序，而且兼容各种介质，syslinux 是一个小型的 Linux 操作系统，它的目的是简化首次安装 Linux 的时间，并建立修护或其它特殊用途的启动盘）
 
    ```bash
    yum install syslinux-tftpboot -y
@@ -145,6 +145,12 @@ PXE 的工作过程
    # 安装系统
    install
 
+   # 从http服务器获取安装文件
+   url --url="http://192.168.56.101/centos7/"
+
+   # 使用文本模式安装
+   text
+
    lang en_US.UTF-8
    keyboard us
 
@@ -154,9 +160,10 @@ PXE 的工作过程
    # 设置网卡
    network  --bootproto=dhcp --device=enp0s3 --ipv6=auto --activate
    network  --bootproto=dhcp --device=enp0s8 --ipv6=auto --activate
-   network  --hostname=localhost.localdomain
 
-   repo --name=epel --baseurl=http://dl.fedoraproject.org/pub/epel/7/x86_64
+   # 配置静态ip
+   #network --bootproto=static --device=enp0s3 --ip=10.0.2.15 --netmask=255.255.255.0 --gateway=10.0.2.0
+   network  --hostname=localhost.localdomain
 
    # 安装完成后重启
    reboot
@@ -168,18 +175,26 @@ PXE 的工作过程
    selinux --disabled
    firstboot --disabled
 
-   text
-   cmdline
-
    timezone Asia/Shanghai
    logging --level=debug
 
-   # 系统分区
+   # 清除mbr引导信息
    zerombr
+
+   # 系统引导相关配置，指定引导记录被写入mbr，append指定内核参数
    bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+
+   # 清除所有分区，initlable初始化标签磁盘分区
    clearpart --all --initlabel
-   part / --fstype xfs --asprimary --size 4096 --mkfsoptions='-n ftype=1'
-   part swap --asprimary --size 1024
+
+   # boot分区200M
+   part /boot --fstype ext4 --asprimary --size 200
+
+   # swap分区1024M
+   part swap --size 1024
+
+   # 根分区4096M，grow使用所有可用空间
+   part / --fstype ext4 --asprimary --size 4096 --grow
 
    %packages
    @^minimal
@@ -194,16 +209,16 @@ PXE 的工作过程
 5. 创建 /var/lib/tftpboot/pxelinux.cfg/default
 
    ```bash
-   cat > /var/lib/tftpboot/pxelinux.cfg/default << EOF
-   default menu.c32
-       timeout 30
-       menu title PXE install CentOS 7
+    cat > /var/lib/tftpboot/pxelinux.cfg/default << EOF
+    default menu.c32
+        timeout 30
+        menu title PXE install CentOS 7
 
-       label linux
-       menu label Install CentOS 7 x86_64
-       kernel vmlinuz
-       append initrd=initrd.img inst.repo=http://192.168.56.101/centos7 ks=http://192.168.56.101/ks.cfg
-   EOF
+        label linux
+            menu label ^Install CentOS 7
+            kernel vmlinuz
+            append initrd=initrd.img ks=http://192.168.56.101/ks.cfg
+    EOF
    ```
 
 6. 启动 http 服务
