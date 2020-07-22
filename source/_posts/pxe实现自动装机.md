@@ -244,14 +244,14 @@ PXE 的工作过程
         kernel ubuntu16.04/linux
         append initrd=ubuntu16.04/initrd.gz ks=http://192.168.56.101/ubuntu16.04/ks.cfg
     EOF
-    ````
+    ```
 
 6. 启动 http 服务
 
     ```bash
     systemctl start httpd
     systemctl enable httpd #开机启动http服务
-    ````
+    ```
 
 ### 安装 dhcp 服务
 
