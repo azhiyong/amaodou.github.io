@@ -37,9 +37,9 @@ PXE 的工作过程
 
 2. 准备客户端装机镜像，CentOS/Ubuntu 都可以，比如 CentOS-7-x86_64-Minimal-1804.iso
 
-## 搭建 PXE 服务器
+## 设置PXE引导服务器
 
-### 安装 tftp 服务
+### 配置 tftp 服务
 
 1. 安装 tftp 和 xinetd；tftp 服务依赖于网络守护进程服务程序 xinetd，通过 xinetd 提供 tftp 服务
 
@@ -164,7 +164,7 @@ PXE 的工作过程
 4. 创建 kiskstart 文件，该文件包含了安装过程需要配置的参数信息
 
     ```bash
-    cat > /var/www/html/centos7/ks.cfg << EOF
+    [root@localhost ~]# cat > /var/www/html/centos7/ks.cfg << EOF
     # 安装系统
     install
 
@@ -230,7 +230,7 @@ PXE 的工作过程
 5. 创建 /var/lib/tftpboot/pxelinux.cfg/default
 
     ```bash
-    cat > /var/lib/tftpboot/pxelinux.cfg/default << EOF
+    [root@localhost ~]# cat > /var/lib/tftpboot/pxelinux.cfg/default << EOF
     default menu.c32
         timeout 30
         menu title PXE install CentOS or Ubuntu
@@ -264,7 +264,7 @@ PXE 的工作过程
 2. 配置 dhcp
 
     ```bash
-    cat > /etc/dhcp/dhcpd.conf << EOF
+    [root@localhost ~]# cat > /etc/dhcp/dhcpd.conf << EOF
 
     subnet 192.168.56.0 netmask 255.255.255.0 {
         range 192.168.56.2 192.168.56.200;
@@ -286,6 +286,13 @@ PXE 的工作过程
     ```bash
     systemctl start dhcpd
     systemctl enable dhcpd #开机启动
+    ```
+
+4. 设置防火墙
+
+    ```bash
+    firewall-cmd --permanent --add-service={dhcp,proxy-dhcp}
+    firewall-cmd --reload
     ```
 
 ## pxe 客户端安装测试
