@@ -283,3 +283,7 @@ PXE 的工作过程
    客户端出现引导菜单
 
    ![引导菜单](/images/linux/pxe%20client引导菜单.png)
+
+## 参考资料
+
+- No space left on device: https://access.redhat.com/solutions/3293511
