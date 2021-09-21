@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"amaodou.gitee.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.7.1","exturl":false,"sidebar":{"position":"left","width":500,"display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="编程规约命名风格 【强制】POJO 类中布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误。 反例：定义为基本数据类型 Boolean isDeleted 的属性，它的方法也是 isDeleted()，RPC框架在反向解析的时候，“误以为”对应的属性名称是 deleted，导致属性获取不到，进而抛出异常。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ali Java开发手册精选">
+<meta property="og:url" content="http://amaodou.gitee.io/2020/05/09/ali-java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E7%B2%BE%E9%80%89/index.html">
+<meta property="og:site_name" content="amaodou&#39;s lab">
+<meta property="og:description" content="编程规约命名风格 【强制】POJO 类中布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误。 反例：定义为基本数据类型 Boolean isDeleted 的属性，它的方法也是 isDeleted()，RPC框架在反向解析的时候，“误以为”对应的属性名称是 deleted，导致属性获取不到，进而抛出异常。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-09T03:09:13.000Z">
+<meta property="article:modified_time" content="2021-09-21T02:28:04.642Z">
+<meta property="article:author" content="amaodou">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://amaodou.gitee.io/2020/05/09/ali-java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E7%B2%BE%E9%80%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://amaodou.gitee.io/2020/05/09/ali-java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E7%B2%BE%E9%80%89/","path":"2020/05/09/ali-java开发手册精选/","title":"ali Java开发手册精选"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ali Java开发手册精选 | amaodou's lab</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">amaodou's lab</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E8%A7%84%E7%BA%A6"><span class="nav-number">1.</span> <span class="nav-text">编程规约</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E9%A3%8E%E6%A0%BC"><span class="nav-number">1.1.</span> <span class="nav-text">命名风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OOP-%E8%A7%84%E7%BA%A6"><span class="nav-number">1.2.</span> <span class="nav-text">OOP 规约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E5%A4%84%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">集合处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%A4%84%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">并发处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E9%87%8A%E8%A7%84%E7%BA%A6"><span class="nav-number">1.5.</span> <span class="nav-text">注释规约</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E6%97%A5%E5%BF%97"><span class="nav-number">2.</span> <span class="nav-text">异常日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">4.</span> <span class="nav-text">MySQL 数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E8%A7%84%E7%BA%A6"><span class="nav-number">4.1.</span> <span class="nav-text">索引规约</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E8%AF%AD%E5%8F%A5"><span class="nav-number">4.2.</span> <span class="nav-text">SQL 语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ORM-%E6%98%A0%E5%B0%84"><span class="nav-number">4.3.</span> <span class="nav-text">ORM 映射</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">工程结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%88%86%E5%B1%82"><span class="nav-number">5.1.</span> <span class="nav-text">应用分层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E6%96%B9%E5%BA%93%E4%BE%9D%E8%B5%96"><span class="nav-number">5.2.</span> <span class="nav-text">二方库依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">5.3.</span> <span class="nav-text">服务器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E8%A7%84%E7%BA%A6"><span class="nav-number">6.</span> <span class="nav-text">设计规约</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">amaodou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://amaodou.gitee.io/2020/05/09/ali-java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E7%B2%BE%E9%80%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="amaodou">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="amaodou's lab">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ali Java开发手册精选
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-09 11:09:13" itemprop="dateCreated datePublished" datetime="2020-05-09T11:09:13+08:00">2020-05-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-21 10:28:04" itemprop="dateModified" datetime="2021-09-21T10:28:04+08:00">2021-09-21</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="编程规约"><a href="#编程规约" class="headerlink" title="编程规约"></a>编程规约</h2><h3 id="命名风格"><a href="#命名风格" class="headerlink" title="命名风格"></a>命名风格</h3><ol>
+<li><p>【强制】POJO 类中布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误。</p>
+<p>反例：定义为基本数据类型 Boolean isDeleted 的属性，它的方法也是 isDeleted()，RPC<br>框架在反向解析的时候，“误以为”对应的属性名称是 deleted，导致属性获取不到，进而抛<br>出异常。</p>
+<span id="more"></span>
+</li>
+<li><p>【参考】各层命名规约：</p>
+<p>A) Service/DAO 层方法命名规约</p>
+<ol>
+<li>获取单个对象的方法用 get 做前缀。</li>
+<li>获取多个对象的方法用 list 做前缀，复数形式结尾如：listObjects。</li>
+<li>获取统计值的方法用 count 做前缀。</li>
+<li>插入的方法用 save/insert 做前缀。</li>
+<li>删除的方法用 remove/delete 做前缀。</li>
+<li>修改的方法用 update 做前缀。</li>
+</ol>
+<p>B) 领域模型命名规约</p>
+<ol>
+<li>数据对象：xxxDO，xxx 即为数据表名。</li>
+<li>数据传输对象：xxxDTO，xxx 为业务领域相关的名称。</li>
+<li>展示对象：xxxVO，xxx 一般为网页名称。</li>
+<li>POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO。</li>
+</ol>
+</li>
+</ol>
+<h3 id="OOP-规约"><a href="#OOP-规约" class="headerlink" title="OOP 规约"></a>OOP 规约</h3><ol>
+<li><p>【强制】Object 的 equals 方法容易抛空指针异常，应使用常量或确定有值的对象来调用<br>equals。</p>
+<p>正例：”test”.equals(object);</p>
+<p>反例：object.equals(“test”);</p>
+<p>说明：推荐使用 java.util.Objects#equals（JDK7 引入的工具类）</p>
+</li>
+<li><p>关于基本数据类型与包装数据类型的使用标准如下：</p>
+<ol>
+<li>【强制】所有的 POJO 类属性必须使用包装数据类型。</li>
+<li>【强制】RPC 方法的返回值和参数必须使用包装数据类型。</li>
+<li>【推荐】所有的局部变量使用基本数据类型。</li>
+</ol>
+<p>说明：POJO 类属性没有初值是提醒使用者在需要使用时，必须自己显式地进行赋值，任何<br>NPE 问题，或者入库检查，都由使用者来保证。</p>
+<p>正例：数据库的查询结果可能是 null，因为自动拆箱，用基本数据类型接收有 NPE 风险。</p>
+<p>反例：比如显示成交总额涨跌情况，即正负 x%，x 为基本数据类型，调用的 RPC 服务，调用<br>不成功时，返回的是默认值，页面显示为 0%，这是不合理的，应该显示成中划线。所以包装<br>数据类型的 null 值，能够表示额外的信息，如：远程调用失败，异常退出。</p>
+</li>
+<li><p>【强制】定义 DO/DTO/VO 等 POJO 类时，不要设定任何属性默认值。</p>
+<p>反例：POJO 类的 gmtCreate 默认值为 new Date()，但是这个属性在数据提取时并没有置入具<br>体值，在更新其它字段时又附带更新了此字段，导致创建时间被修改成当前时间。</p>
+</li>
+<li><p>【强制】序列化类新增属性时，请不要修改 serialVersionUID 字段，避免反序列失败；如<br>果完全不兼容升级，避免反序列化混乱，那么请修改 serialVersionUID 值。</p>
+<p>说明：注意 serialVersionUID 不一致会抛出序列化运行时异常。</p>
+</li>
+<li><p>【推荐】循环体内，字符串的连接方式，使用 StringBuilder 的 append 方法进行扩展。</p>
+<p>说明：下例中，反编译出的字节码文件显示每次循环都会 new 出一个 StringBuilder 对象，<br>然后进行 append 操作，最后通过 toString 方法返回 String 对象，造成内存资源浪费。</p>
+<p>反例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">&quot;start&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    str = str + <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="集合处理"><a href="#集合处理" class="headerlink" title="集合处理"></a>集合处理</h3><ol>
+<li><p>【强制】关于 hashCode 和 equals 的处理，遵循如下规则：</p>
+<ol>
+<li>只要重写 equals，就必须重写 hashCode。</li>
+<li>因为 Set 存储的是不重复的对象，依据 hashCode 和 equals 进行判断，所以 Set 存储的<br>对象必须重写这两个方法。</li>
+<li>如果自定义对象作为 Map 的键，那么必须重写 hashCode 和 equals。</li>
+</ol>
+<p>说明：String 重写了 hashCode 和 equals 方法，所以我们可以非常愉快地使用 String 对象<br>作为 key 来使用。</p>
+</li>
+<li><p>【强制】ArrayList 的 subList 结果不可强转成 ArrayList，否则会抛出 ClassCastException<br>异常，即 java.util.RandomAccessSubList cannot be cast to java.util.ArrayList。</p>
+<p>说明：subList 返回的是 ArrayList 的内部类 SubList，并不是 ArrayList 而是 ArrayList<br>的一个视图，对于 SubList 子列表的所有操作最终会反映到原列表上。</p>
+</li>
+<li><p>【强制】在 subList 场景中，高度注意对原集合元素的增加或删除，均会导致子列表的遍历、<br>增加、删除产生 ConcurrentModificationException 异常。</p>
+</li>
+<li><p>【强制】使用集合转数组的方法，必须使用集合的 toArray(T[] array)，传入的是类型完全<br>一样的数组，大小就是 list.size()。</p>
+<p>说明：使用 toArray 带参方法，入参分配的数组空间不够大时，toArray 方法内部将重新分配<br>内存空间，并返回新数组地址；如果数组元素个数大于实际所需，下标为[ list.size() ]<br>的数组元素将被置为 null，其它数组元素保持原值，因此最好将方法入参数组大小定义与集<br>合元素个数一致。</p>
+<p>正例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;(<span class="number">2</span>);</span><br><span class="line">list.add(<span class="string">&quot;guan&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;bao&quot;</span>);</span><br><span class="line">String[] array = <span class="keyword">new</span> String[list.size()];</span><br><span class="line">array = list.toArray(array);</span><br></pre></td></tr></table></figure>
+
+<p>反例：直接使用 toArray 无参方法存在问题，此方法返回值只能是 Object[]类，若强转其它<br>类型数组将出现 ClassCastException 错误。</p>
+</li>
+<li><p>【强制】使用工具类 Arrays.asList()把数组转换成集合时，不能使用其修改集合相关的方<br>法，它的 add/remove/clear 方法会抛出 UnsupportedOperationException 异常。</p>
+<p>说明：asList 的返回对象是一个 Arrays 内部类，并没有实现集合的修改方法。Arrays.asList<br>体现的是适配器模式，只是转换接口，后台的数据仍是数组。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String[] str = <span class="keyword">new</span> String[] &#123; <span class="string">&quot;you&quot;</span>, <span class="string">&quot;wu&quot;</span> &#125;;</span><br><span class="line">List list = Arrays.asList(str);</span><br></pre></td></tr></table></figure>
+
+<p>第一种情况：list.add(“yangguanbao”); 运行时异常。</p>
+<p>第二种情况：str[0] = “gujin”; 那么 list.get(0)也会随之修改。</p>
+</li>
+<li><p>【强制】泛型通配符&lt;? extends T&gt;来接收返回的数据，此写法的泛型集合不能使用 add 方<br>法，而&lt;? super T&gt;不能使用 get 方法，作为接口调用赋值时易出错。</p>
+<p>说明：扩展说一下 PECS(Producer Extends Consumer Super)原则：第一、频繁往外读取内<br>容的，适合用&lt;? extends T&gt;。第二、经常往里插入的，适合用&lt;? super T&gt;。</p>
+</li>
+<li><p>【强制】不要在 foreach 循环里进行元素的 remove/add 操作。remove 元素请使用 Iterator<br>方式，如果并发操作，需要对 Iterator 对象加锁。</p>
+<p>正例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">Iterator&lt;String&gt; iterator = list.iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">    String item = iterator.next();</span><br><span class="line">    <span class="keyword">if</span> (删除元素的条件) &#123;</span><br><span class="line">        iterator.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>反例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (String item : list) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">&quot;1&quot;</span>.equals(item)) &#123;</span><br><span class="line">        list.remove(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>说明：以上代码的执行结果肯定会出乎大家的意料，那么试一下把“1”换成“2”，会是同样的<br>结果吗？</p>
+</li>
+<li><p>【强制】在 JDK7 版本及以上，Comparator 实现类要满足如下三个条件，不然 Arrays.sort，<br>Collections.sort 会报 IllegalArgumentException 异常。</p>
+<p>说明：三个条件如下</p>
+<ol>
+<li>x，y 的比较结果和 y，x 的比较结果相反。</li>
+<li>x&gt;y，y&gt;z，则 x&gt;z。</li>
+<li>x=y，则 x，z 比较结果和 y，z 比较结果相同。</li>
+</ol>
+<p>反例：下例中没有处理相等的情况，实际使用中可能会出现异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Comparator&lt;Student&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Student o1, Student o2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> o1.getId() &gt; o2.getId() ? <span class="number">1</span> : -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>【推荐】集合初始化时，指定集合初始值大小。</p>
+<p>说明：HashMap 使用 HashMap(int initialCapacity) 初始化。</p>
+<p>正例：initialCapacity = (需要存储的元素个数 / 负载因子) + 1。注意负载因子（即 loader<br>factor）默认为 0.75，如果暂时无法确定初始值大小，请设置为 16（即默认值）。</p>
+<p>反例：HashMap 需要放置 1024 个元素，由于没有设置容量初始大小，随着元素不断增加，容<br>量 7 次被迫扩大，resize 需要重建 hash 表，严重影响性能。</p>
+</li>
+<li><p>【推荐】高度注意 Map 类集合 K/V 能不能存储 null 值的情况，如下表格：</p>
+<table>
+<thead>
+<tr>
+<th>集合类</th>
+<th>Key</th>
+<th>Value</th>
+<th>Super</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hashtable</td>
+<td>不允许为 null</td>
+<td>不允许为 null</td>
+<td>Dictionary</td>
+<td>线程安全</td>
+</tr>
+<tr>
+<td>ConcurrentHashMap</td>
+<td>不允许为 null</td>
+<td>不允许为 null</td>
+<td>AbstractMap</td>
+<td>锁分段技术（JDK8:CAS）</td>
+</tr>
+<tr>
+<td>TreeMap</td>
+<td>不允许为 null</td>
+<td>允许为 null</td>
+<td>AbstractMap</td>
+<td>线程不安全</td>
+</tr>
+<tr>
+<td>HashMap</td>
+<td>允许为 null</td>
+<td>允许为 null</td>
+<td>AbstractMap</td>
+<td>线程不安全</td>
+</tr>
+</tbody></table>
+<p>反例： 由于 HashMap 的干扰，很多人认为 ConcurrentHashMap 是可以置入 null 值，而事实上，<br>存储 null 值时会抛出 NPE 异常。</p>
+</li>
+</ol>
+<h3 id="并发处理"><a href="#并发处理" class="headerlink" title="并发处理"></a>并发处理</h3><ol>
+<li><p>【强制】线程池不允许使用 Executors 去创建，而是通过 ThreadPoolExecutor 的方式，这样<br>的处理方式让写的同学更加明确线程池的运行规则，规避资源耗尽的风险。</p>
+<p>说明：Executors 返回的线程池对象的弊端如下：</p>
+<ol>
+<li>FixedThreadPool 和 SingleThreadPool:<br>允许的请求队列长度为 Integer.MAX_VALUE，可能会堆积大量的请求，从而导致 OOM。</li>
+<li>CachedThreadPool 和 ScheduledThreadPool:<br>允许的创建线程数量为 Integer.MAX_VALUE，可能会创建大量的线程，从而导致 OOM。</li>
+</ol>
+</li>
+<li><p>【强制】SimpleDateFormat 是线程不安全的类，一般不要定义为 static 变量，如果定义为<br>static，必须加锁，或者使用 DateUtils 工具类。</p>
+<p>正例：注意线程安全，使用 DateUtils。亦推荐如下处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;DateFormat&gt; df = <span class="keyword">new</span> ThreadLocal&lt;DateFormat&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> DateFormat <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>说明：如果是 JDK8 的应用，可以使用 Instant 代替 Date，LocalDateTime 代替 Calendar，<br>DateTimeFormatter 代替 SimpleDateFormat，官方给出的解释：simple beautiful strong<br>immutable thread-safe。</p>
+</li>
+<li><p>【推荐】使用 CountDownLatch 进行异步转同步操作，每个线程退出前必须调用 countDown<br>方法，线程执行代码注意 catch 异常，确保 countDown 方法被执行到，避免主线程无法执行<br>至 await 方法，直到超时才返回结果。</p>
+<p>说明：注意，子线程抛出异常堆栈，不能在主线程 try-catch 到。</p>
+</li>
+<li><p>【参考】 HashMap 在容量不够进行 resize 时由于高并发可能出现死链，导致 CPU 飙升，在<br>开发过程中可以使用其它数据结构或加锁来规避此风险。</p>
+</li>
+</ol>
+<h3 id="注释规约"><a href="#注释规约" class="headerlink" title="注释规约"></a>注释规约</h3><ol>
+<li><p>【强制】类、类属性、类方法的注释必须使用 Javadoc 规范，使用/*<em>内容</em>/格式，不得使用<br>// xxx 方式。</p>
+<p>说明：在 IDE 编辑窗口中，Javadoc 方式会提示相关注释，生成 Javadoc 可以正确输出相应注<br>释；在 IDE 中，工程调用方法时，不进入方法即可悬浮提示方法、参数、返回值的意义，提高<br>阅读效率。</p>
+</li>
+<li><p>【参考】特殊注释标记，请注明标记人与标记时间。注意及时处理这些标记，通过标记扫描，<br>经常清理此类标记。线上故障有时候就是来源于这些标记处的代码。</p>
+<ol>
+<li>待办事宜（TODO）:（ 标记人，标记时间，[预计处理时间]）<br>表示需要实现，但目前还未实现的功能。这实际上是一个 Javadoc 的标签，目前的 Javadoc<br>还没有实现，但已经被广泛使用。只能应用于类，接口和方法（因为它是一个 Javadoc 标签）。</li>
+<li>错误，不能工作（FIXME）:（标记人，标记时间，[预计处理时间]）<br>在注释中用 FIXME 标记某代码是错误的，而且不能工作，需要及时纠正的情况。</li>
+</ol>
+</li>
+</ol>
+<h2 id="异常日志"><a href="#异常日志" class="headerlink" title="异常日志"></a>异常日志</h2><ol>
+<li><p>【强制】异常不要用来做流程控制，条件控制。</p>
+<p>说明：异常设计的初衷是解决程序运行中的各种意外情况，且异常的处理效率比条件判断方式<br>要低很多。</p>
+</li>
+<li><p>【强制】不要在 finally 块中使用 return。</p>
+<p>说明：finally 块中的 return 返回后方法结束执行，不会再执行 try 块中的 return 语句。</p>
+</li>
+<li><p>【推荐】方法的返回值可以为 null，不强制返回空集合，或者空对象等，必须添加注释充分<br>说明什么情况下会返回 null 值。</p>
+<p>说明：本手册明确防止 NPE 是调用者的责任。即使被调用方法返回空集合或者空对象，对调用<br>者来说，也并非高枕无忧，必须考虑到远程调用失败、序列化失败、运行时异常等场景返回<br>null 的情况。</p>
+</li>
+</ol>
+<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><ol>
+<li><p>【强制】好的单元测试必须遵守 AIR 原则。</p>
+<p>说明：单元测试在线上运行时，感觉像空气（AIR）一样并不存在，但在测试质量的保障上，<br>却是非常关键的。好的单元测试宏观上来说，具有自动化、独立性、可重复执行的特点。</p>
+<ul>
+<li>A：Automatic（自动化）</li>
+<li>I：Independent（独立性）</li>
+<li>R：Repeatable（可重复）</li>
+</ul>
+</li>
+<li><p>【强制】单元测试是可以重复执行的，不能受到外界环境的影响。</p>
+<p>说明：单元测试通常会被放到持续集成中，每次有代码 check in 时单元测试都会被执行。如<br>果单测对外部环境（网络、服务、中间件等）有依赖，容易导致持续集成机制的不可用。</p>
+<p>正例：为了不受外界环境影响，要求设计代码时就把 SUT 的依赖改成注入，在测试时用 spring<br>这样的 DI 框架注入一个本地（内存）实现或者 Mock 实现。</p>
+</li>
+<li><p>【推荐】编写单元测试代码遵守 BCDE 原则，以保证被测试模块的交付质量。</p>
+<ul>
+<li>B：Border，边界值测试，包括循环边界、特殊取值、特殊时间点、数据顺序等。</li>
+<li>C：Correct，正确的输入，并得到预期的结果。</li>
+<li>D：Design，与设计文档相结合，来编写单元测试。</li>
+<li>E：Error，强制错误信息输入（如：非法数据、异常流程、非业务允许输入等），并得<br>到预期的结果。</li>
+</ul>
+</li>
+</ol>
+<h2 id="MySQL-数据库"><a href="#MySQL-数据库" class="headerlink" title="MySQL 数据库"></a>MySQL 数据库</h2><h3 id="索引规约"><a href="#索引规约" class="headerlink" title="索引规约"></a>索引规约</h3><ol>
+<li><p>【强制】业务上具有唯一特性的字段，即使是多个字段的组合，也必须建成唯一索引。</p>
+<p>说明：不要以为唯一索引影响了 insert 速度，这个速度损耗可以忽略，但提高查找速度是明<br>显的；另外，即使在应用层做了非常完善的校验控制，只要没有唯一索引，根据墨菲定律，必<br>然有脏数据产生。</p>
+</li>
+<li><p>【强制】在 varchar 字段上建立索引时，必须指定索引长度，没必要对全字段建立索引，根据<br>实际文本区分度决定索引长度即可。</p>
+<p>说明：索引的长度与区分度是一对矛盾体，一般对字符串类型数据，长度为 20 的索引，区分<br>度会高达 90%以上，可以使用 count(distinct left(列名, 索引长度))/count(*)的区分度<br>来确定。</p>
+</li>
+<li><p>【强制】页面搜索严禁左模糊或者全模糊，如果需要请走搜索引擎来解决。</p>
+<p>说明：索引文件具有 B-Tree 的最左前缀匹配特性，如果左边的值未确定，那么无法使用此索<br>引。</p>
+</li>
+<li><p>【推荐】利用延迟关联或者子查询优化超多分页场景。</p>
+<p>说明：MySQL 并不是跳过 offset 行，而是取 offset+N 行，然后返回放弃前 offset 行，返回<br>N 行，那当 offset 特别大的时候，效率就非常的低下，要么控制返回的总页数，要么对超过<br>特定阈值的页数进行 SQL 改写。</p>
+<p>正例：先快速定位需要获取的 id 段，然后再关联：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> a.<span class="operator">*</span> <span class="keyword">FROM</span> 表 <span class="number">1</span> a, (<span class="keyword">select</span> id <span class="keyword">from</span> 表 <span class="number">1</span> <span class="keyword">where</span> 条件 LIMIT <span class="number">100000</span>,<span class="number">20</span> ) b <span class="keyword">where</span> a.id<span class="operator">=</span>b.id</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>【推荐】SQL 性能优化的目标：至少要达到 range 级别，要求是 ref 级别，如果可以是 consts<br>最好。</p>
+<p>说明：</p>
+<ol>
+<li>consts 单表中最多只有一个匹配行（主键或者唯一索引），在优化阶段即可读取到数据。</li>
+<li>ref 指的是使用普通的索引（normal index）。</li>
+<li>range 对索引进行范围检索。</li>
+</ol>
+<p>反例：explain 表的结果，type=index，索引物理文件全扫描，速度非常慢，这个 index 级<br>别比较 range 还低，与全表扫描是小巫见大巫。</p>
+</li>
+</ol>
+<h3 id="SQL-语句"><a href="#SQL-语句" class="headerlink" title="SQL 语句"></a>SQL 语句</h3><ol>
+<li><p>【强制】不要使用 count(列名)或 count(常量)来替代 count(<em>)，count(</em>)是 SQL92 定义的<br>标准统计行数的语法，跟数据库无关，跟 NULL 和非 NULL 无关。</p>
+<p>说明：count(*)会统计值为 NULL 的行，而 count(列名)不会统计此列为 NULL 值的行。</p>
+</li>
+<li><p>【强制】count(distinct col) 计算该列除 NULL 之外的不重复行数，注意 count(distinct<br>col1, col2) 如果其中一列全为 NULL，那么即使另一列有不同的值，也返回为 0。</p>
+</li>
+<li><p>【强制】当某一列的值全是 NULL 时，count(col)的返回结果为 0，但 sum(col)的返回结果为<br>NULL，因此使用 sum()时需注意 NPE 问题。</p>
+<p>正例：可以使用如下方式来避免 sum 的 NPE 问题：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> IF(ISNULL(<span class="built_in">SUM</span>(g)),<span class="number">0</span>,<span class="built_in">SUM</span>(g)) <span class="keyword">FROM</span> <span class="keyword">table</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>【强制】使用 ISNULL()来判断是否为 NULL 值。</p>
+<p>说明：NULL 与任何值的直接比较都为 NULL。</p>
+<ol>
+<li>NULL&lt;&gt;NULL 的返回结果是 NULL，而不是 false。</li>
+<li>NULL=NULL 的返回结果是 NULL，而不是 true。</li>
+<li>NULL&lt;&gt;1 的返回结果是 NULL，而不是 true。</li>
+</ol>
+</li>
+<li><p>【推荐】in 操作能避免则避免，若实在避免不了，需要仔细评估 in 后边的集合元素数量，控<br>制在 1000 个之内。</p>
+</li>
+<li><p>【参考】如果有国际化需要，所有的字符存储与表示，均以 utf-8 编码，注意字符统计函数<br>的区别。</p>
+<p>说明：</p>
+<p>SELECT LENGTH(“轻松工作”)； 返回为 12</p>
+<p>SELECT CHARACTER_LENGTH(“轻松工作”)； 返回为 4</p>
+<p>如果需要存储表情，那么选择 utf8mb4 来进行存储，注意它与 utf-8 编码的区别。</p>
+</li>
+</ol>
+<h3 id="ORM-映射"><a href="#ORM-映射" class="headerlink" title="ORM 映射"></a>ORM 映射</h3><ol>
+<li><p>【强制】POJO 类的布尔属性不能加 is，而数据库字段必须加 is_，要求在 resultMap 中进行<br>字段与属性之间的映射。</p>
+<p>说明：参见定义 POJO 类以及数据库字段定义规定，在<code>&lt;resultMap&gt;</code>中增加映射，是必须的。<br>在 MyBatis Generator 生成的代码中，需要进行对应的修改。</p>
+</li>
+<li><p>【推荐】不要写一个大而全的数据更新接口。传入为 POJO 类，不管是不是自己的目标更新字<br>段，都进行 <code>update table set c1=value1,c2=value2,c3=value3;</code> 这是不对的。执行 SQL<br>时，不要更新无改动的字段，一是易出错；二是效率低；三是增加 binlog 存储。</p>
+</li>
+</ol>
+<h2 id="工程结构"><a href="#工程结构" class="headerlink" title="工程结构"></a>工程结构</h2><h3 id="应用分层"><a href="#应用分层" class="headerlink" title="应用分层"></a>应用分层</h3><ol>
+<li><p>【参考】分层领域模型规约：</p>
+<ul>
+<li>DO（Data Object）：此对象与数据库表结构一一对应，通过 DAO 层向上传输数据源对象。</li>
+<li>DTO（Data Transfer Object）：数据传输对象，Service 或 Manager 向外传输的对象。</li>
+<li>BO（Business Object）：业务对象，由 Service 层输出的封装业务逻辑的对象。</li>
+<li>AO（Application Object）：应用对象，在 Web 层与 Service 层之间抽象的复用对象模型，<br>极为贴近展示层，复用度不高。</li>
+<li>VO（View Object）：显示层对象，通常是 Web 向模板渲染引擎层传输的对象。</li>
+<li>Query：数据查询对象，各层接收上层的查询请求。注意超过 2 个参数的查询封装，禁止<br>使用 Map 类来传输。</li>
+</ul>
+</li>
+</ol>
+<h3 id="二方库依赖"><a href="#二方库依赖" class="headerlink" title="二方库依赖"></a>二方库依赖</h3><ol>
+<li><p>【强制】二方库版本号命名方式：主版本号.次版本号.修订号</p>
+<ol>
+<li>主版本号：产品方向改变，或者大规模 API 不兼容，或者架构不兼容升级。</li>
+<li>次版本号：保持相对兼容性，增加主要功能特性，影响范围极小的 API 不兼容修改。</li>
+<li>修订号：保持完全兼容性，修复 BUG、新增次要功能特性等。</li>
+</ol>
+<p>说明：注意起始版本号必须为：1.0.0，而不是 0.0.1 正式发布的类库必须先去中央仓库进<br>行查证，使版本号有延续性，正式版本号不允许覆盖升级。如当前版本：1.3.3，那么下一个<br>合理的版本号：1.3.4 或 1.4.0 或 2.0.0</p>
+</li>
+<li><p>【强制】二方库里可以定义枚举类型，参数可以使用枚举类型，但是接口返回值不允许使用枚<br>举类型或者包含枚举类型的 POJO 对象。</p>
+</li>
+<li><p>【推荐】所有 pom 文件中的依赖声明放在<code>&lt;dependencies&gt;</code>语句块中，所有版本仲裁放在<br><code>&lt;dependencyManagement&gt;</code>语句块中。</p>
+<p>说明：<code>&lt;dependencyManagement&gt;</code>里只是声明版本，并不实现引入，因此子项目需要显式的声<br>明依赖，version 和 scope 都读取自父 pom。而<code>&lt;dependencies&gt;</code>所有声明在主 pom 的<br><code>&lt;dependencies&gt;</code>里的依赖都会自动引入，并默认被所有的子项目继承。</p>
+</li>
+</ol>
+<h3 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h3><ol>
+<li><p>【推荐】高并发服务器建议调小 TCP 协议的 time_wait 超时时间。</p>
+<p>说明：操作系统默认 240 秒后，才会关闭处于 time_wait 状态的连接，在高并发访问下，服<br>务器端会因为处于 time_wait 的连接数太多，可能无法建立新的连接，所以需要在服务器上<br>调小此等待值。</p>
+<p>正例：在 linux 服务器上请通过变更/etc/sysctl.conf 文件去修改该缺省值（秒）：<br>net.ipv4.tcp_fin_timeout = 30</p>
+</li>
+</ol>
+<h2 id="设计规约"><a href="#设计规约" class="headerlink" title="设计规约"></a>设计规约</h2><ol>
+<li><p>【推荐】谨慎使用继承的方式来进行扩展，优先使用聚合/组合的方式来实现。</p>
+<p>说明：不得已使用继承的话，必须符合里氏代换原则，此原则说父类能够出现的地方子类一定<br>能够出现，比如，“把钱交出来”，钱的子类美元、欧元、人民币等都可以出现。</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/09/%E5%9B%BE%E8%A7%A3string%E7%9A%84%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%80%A7/" rel="prev" title="图解Java String的不可变性">
+                  <i class="fa fa-chevron-left"></i> 图解Java String的不可变性
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/09/ssh%E4%B9%8Bconfig%E4%BD%BF%E7%94%A8/" rel="next" title="ssh之config使用">
+                  ssh之config使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">amaodou</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

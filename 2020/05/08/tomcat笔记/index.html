@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"amaodou.gitee.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.7.1","exturl":false,"sidebar":{"position":"left","width":500,"display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Tomcat 整体结构 Server一个 Server 可以包含多个 Service">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tomcat笔记">
+<meta property="og:url" content="http://amaodou.gitee.io/2020/05/08/tomcat%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="amaodou&#39;s lab">
+<meta property="og:description" content="Tomcat 整体结构 Server一个 Server 可以包含多个 Service">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://amaodou.gitee.io/images/tomcat/tomcat%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://amaodou.gitee.io/images/tomcat/tomcat%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="http://amaodou.gitee.io/images/tomcat/tomcat%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png">
+<meta property="article:published_time" content="2020-05-08T15:28:27.000Z">
+<meta property="article:modified_time" content="2021-09-21T02:28:04.643Z">
+<meta property="article:author" content="amaodou">
+<meta property="article:tag" content="Tomcat">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://amaodou.gitee.io/images/tomcat/tomcat%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
+
+
+<link rel="canonical" href="http://amaodou.gitee.io/2020/05/08/tomcat%E7%AC%94%E8%AE%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://amaodou.gitee.io/2020/05/08/tomcat%E7%AC%94%E8%AE%B0/","path":"2020/05/08/tomcat笔记/","title":"Tomcat笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Tomcat笔记 | amaodou's lab</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">amaodou's lab</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Tomcat-%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Tomcat 整体结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Server"><span class="nav-number">1.1.</span> <span class="nav-text">Server</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Service"><span class="nav-number">1.1.1.</span> <span class="nav-text">Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Connector"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Connector</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Container"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">Container</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tomcat-%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">Tomcat 启动流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tomcat-%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">Tomcat 请求处理流程</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">amaodou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://amaodou.gitee.io/2020/05/08/tomcat%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="amaodou">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="amaodou's lab">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Tomcat笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-08 23:28:27" itemprop="dateCreated datePublished" datetime="2020-05-08T23:28:27+08:00">2020-05-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-21 10:28:04" itemprop="dateModified" datetime="2021-09-21T10:28:04+08:00">2021-09-21</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Tomcat-整体结构"><a href="#Tomcat-整体结构" class="headerlink" title="Tomcat 整体结构"></a>Tomcat 整体结构</h2><p><img src="/images/tomcat/tomcat%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png" alt="Tomcat"></p>
+<h3 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h3><p>一个 Server 可以包含多个 Service</p>
+<span id="more"></span>
+
+<h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><p>一个 Service 由多个 Connector 和一个 Container 组成，可以包含共享的线程池</p>
+<h5 id="Connector"><a href="#Connector" class="headerlink" title="Connector"></a>Connector</h5><p>Tomcat 的连接器，负责接收请求，并将请求交给 Container 处理</p>
+<ul>
+<li><p>Endpoint</p>
+<p>负责监听 Socket 连接，建立 TCP 3 次握手，并将 Socket 连接交给 Processor 处理</p>
+</li>
+<li><p>Processor</p>
+<p>接收 Socket 读取输入流，封装 Tomcat 自身的 Request 和 Response，将 Request 和 Response 交给 CoyoteAdapter 处理</p>
+</li>
+<li><p>ProtocolHandler</p>
+<p>处理协议和 IO，Tomcat 提供 6 个实现类：AjpNioProtocol，AjpAprProtocol，AjpNio2Protocol，Http11NioProtocol，Http11Nio2Protocol，Http11AprProtocol，一般使用 Http11NioProtocol</p>
+</li>
+<li><p>Adapter</p>
+<p>实现类 CoyoteAdapter，将不同协议的请求内容适配成标准的 HttpServletRequest 和 HttpServletResponse，再交给 Container 处理</p>
+</li>
+</ul>
+<h5 id="Container"><a href="#Container" class="headerlink" title="Container"></a>Container</h5><p>Servlet 容器，负责加载和管理 Servlet，将请求交给具体的 Servlet 处理</p>
+<ul>
+<li><p>Engine</p>
+<p>Servlet 容器引擎，一个 Engine 管理多个 Host，负责将请求发送到对应的 Host 处理</p>
+</li>
+<li><p>Host</p>
+<p>表示虚拟主机，一个 Host 可以包含多个 Context，负责将请求发送到对应的 Context 处理</p>
+</li>
+<li><p>Context</p>
+<p>表示一个 web 应用，一个 Context 可以包含多个 Wrapper，负责将请求发送到对应的 Wrapper 处理</p>
+</li>
+<li><p>Wrapper</p>
+<p>表示一个 Servlet，最终调用 Servlet.service 方法</p>
+</li>
+</ul>
+<h3 id="Tomcat-启动流程"><a href="#Tomcat-启动流程" class="headerlink" title="Tomcat 启动流程"></a>Tomcat 启动流程</h3><p><img src="/images/tomcat/tomcat%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png" alt="Tomcat启动流程"></p>
+<h3 id="Tomcat-请求处理流程"><a href="#Tomcat-请求处理流程" class="headerlink" title="Tomcat 请求处理流程"></a>Tomcat 请求处理流程</h3><p><img src="/images/tomcat/tomcat%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B.png" alt="Tomcat请求处理流程"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Tomcat/" rel="tag"># Tomcat</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/08/hello-world/" rel="prev" title="Hello World">
+                  <i class="fa fa-chevron-left"></i> Hello World
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/09/DispatcherServlet%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90/" rel="next" title="DispatcherServlet请求处理流程解析">
+                  DispatcherServlet请求处理流程解析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">amaodou</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

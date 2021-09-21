@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"amaodou.gitee.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.7.1","exturl":false,"sidebar":{"position":"left","width":500,"display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="准备工作3 台 mysql 服务器 和 1 台 mha 服务器    角色 ip 说明    mha manager 192.168.56.3 mha 管理节点   master 192.168.56.5 mysql 主库   slave 192.168.56.6 mysql 从库   slave 192.168.56.7 mysql 从库   mysql 服务器和 mha 服务器全部关闭防火墙">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL高可用架构搭建">
+<meta property="og:url" content="http://amaodou.gitee.io/2020/11/21/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="amaodou&#39;s lab">
+<meta property="og:description" content="准备工作3 台 mysql 服务器 和 1 台 mha 服务器    角色 ip 说明    mha manager 192.168.56.3 mha 管理节点   master 192.168.56.5 mysql 主库   slave 192.168.56.6 mysql 从库   slave 192.168.56.7 mysql 从库   mysql 服务器和 mha 服务器全部关闭防火墙">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-21T03:05:31.000Z">
+<meta property="article:modified_time" content="2021-09-21T02:28:04.642Z">
+<meta property="article:author" content="amaodou">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://amaodou.gitee.io/2020/11/21/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://amaodou.gitee.io/2020/11/21/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA/","path":"2020/11/21/MySQL高可用架构搭建/","title":"MySQL高可用架构搭建"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL高可用架构搭建 | amaodou's lab</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">amaodou's lab</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-%E4%B8%BB%E4%BB%8E%E6%90%AD%E5%BB%BA"><span class="nav-number">2.</span> <span class="nav-text">mysql 主从搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD"><span class="nav-number">2.1.</span> <span class="nav-text">下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4-mariadb"><span class="nav-number">2.2.</span> <span class="nav-text">移除 mariadb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-mysql"><span class="nav-number">2.3.</span> <span class="nav-text">安装 mysql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.4.</span> <span class="nav-text">初始化数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%85%8D%E7%BD%AE"><span class="nav-number">2.5.</span> <span class="nav-text">主从同步配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master-%E9%85%8D%E7%BD%AE"><span class="nav-number">2.5.1.</span> <span class="nav-text">master 配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#slave-%E9%85%8D%E7%BD%AE"><span class="nav-number">2.5.2.</span> <span class="nav-text">slave 配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-number">2.6.</span> <span class="nav-text">半同步复制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="nav-number">2.6.1.</span> <span class="nav-text">master 安装插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#slave-%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="nav-number">2.6.2.</span> <span class="nav-text">slave 安装插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F"><span class="nav-number">2.6.3.</span> <span class="nav-text">检查半同步复制是否成功</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MHA-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%90%AD%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">MHA 高可用搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ssh-%E4%BA%92%E9%80%9A"><span class="nav-number">3.1.</span> <span class="nav-text">ssh 互通</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MHA-%E5%AE%89%E8%A3%85"><span class="nav-number">3.2.</span> <span class="nav-text">MHA 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MHA-%E9%85%8D%E7%BD%AE"><span class="nav-number">3.3.</span> <span class="nav-text">MHA 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-MHA-manager"><span class="nav-number">3.4.</span> <span class="nav-text">启动 MHA manager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-master-%E6%95%85%E9%9A%9C%E6%B5%8B%E8%AF%95"><span class="nav-number">3.5.</span> <span class="nav-text">mysql master 故障测试</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">amaodou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://amaodou.gitee.io/2020/11/21/MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="amaodou">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="amaodou's lab">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL高可用架构搭建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-21 11:05:31" itemprop="dateCreated datePublished" datetime="2020-11-21T11:05:31+08:00">2020-11-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-21 10:28:04" itemprop="dateModified" datetime="2021-09-21T10:28:04+08:00">2021-09-21</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>3 台 mysql 服务器 和 1 台 mha 服务器</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>ip</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mha manager</td>
+<td>192.168.56.3</td>
+<td>mha 管理节点</td>
+</tr>
+<tr>
+<td>master</td>
+<td>192.168.56.5</td>
+<td>mysql 主库</td>
+</tr>
+<tr>
+<td>slave</td>
+<td>192.168.56.6</td>
+<td>mysql 从库</td>
+</tr>
+<tr>
+<td>slave</td>
+<td>192.168.56.7</td>
+<td>mysql 从库</td>
+</tr>
+</tbody></table>
+<p>mysql 服务器和 mha 服务器全部关闭防火墙</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭防火墙</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消开机启动</span></span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="mysql-主从搭建"><a href="#mysql-主从搭建" class="headerlink" title="mysql 主从搭建"></a>mysql 主从搭建</h2><p>3 台 mysql 服务器安装 mysql</p>
+<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 下载</span></span><br><span class="line">wegt https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.28-1.el7.x86_64.rpm- bundle.tar</span><br><span class="line"></span><br><span class="line"><span class="comment">## 解压</span></span><br><span class="line">tar -xvf mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar</span><br><span class="line"></span><br><span class="line"><span class="comment"># mysql-community-embedded-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-libs-compat-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-devel-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-embedded-compat-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-libs-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-test-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-common-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-embedded-devel-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-client-5.7.28-1.el7.x86_64.rpm</span></span><br><span class="line"><span class="comment"># mysql-community-server-5.7.28-1.el7.x86_64.rpm</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="移除-mariadb"><a href="#移除-mariadb" class="headerlink" title="移除 mariadb"></a>移除 mariadb</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep mariadb</span><br><span class="line"></span><br><span class="line"><span class="comment"># mariadb-libs-5.5.56-2.el7.x86_64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除（--nodeps 不验证软件包依赖）</span></span><br><span class="line">rpm -e mariadb-libs-5.5.56-2.el7.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装-mysql"><a href="#安装-mysql" class="headerlink" title="安装 mysql"></a>安装 mysql</h3><p>按需按顺序安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh mysql-community-common-5.7.28-1.el7.x86_64.rpm</span><br><span class="line">rpm -ivh mysql-community-libs-5.7.28-1.el7.x86_64.rpm</span><br><span class="line">rpm -ivh mysql-community-libs-compat-5.7.28-1.el7.x86_64.rpm</span><br><span class="line">rpm -ivh mysql-community-client-5.7.28-1.el7.x86_64.rpm</span><br><span class="line">rpm -ivh mysql-community-server-5.7.28-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化数据库"><a href="#初始化数据库" class="headerlink" title="初始化数据库"></a>初始化数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看mysqld命令选项</span></span><br><span class="line">mysqld --verbose --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --initialize        Create the default database and exit. Create a super user</span></span><br><span class="line"><span class="comment">#                     with a random expired password and store it into the log.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化数据库</span></span><br><span class="line">mysqld --initialize --user=mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从日志中获取mysql密码</span></span><br><span class="line">less /var/<span class="built_in">log</span>/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2020-12-06T01:49:03.177037Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span></span><br><span class="line"><span class="comment"># 2020-12-06T01:49:03.749858Z 0 [Warning] InnoDB: New log files created, LSN=45790</span></span><br><span class="line"><span class="comment"># 2020-12-06T01:49:03.978416Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span></span><br><span class="line"><span class="comment"># 2020-12-06T01:49:04.156867Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 3859d6df-3765-11eb-906f-0800279d8ede.</span></span><br><span class="line"><span class="comment"># 2020-12-06T01:49:04.218652Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span></span><br><span class="line"><span class="comment"># 2020-12-06T01:49:04.711667Z 0 [Warning] CA certificate ca.pem is self signed.</span></span><br><span class="line"><span class="comment"># 2020-12-06T01:49:04.921715Z 1 [Note] A temporary password is generated for root@localhost: xNB)/RbxI3LT</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动mysql服务</span></span><br><span class="line">systemctl start mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将mysql服务设置为开机启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录</span></span><br><span class="line">mysql -h127.0.0.1 -uroot -p<span class="string">&#x27;xNB)/RbxI3LT&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重置mysql密码（help set password 命令说明）</span></span><br><span class="line">mysql&gt; <span class="built_in">set</span> password=password(<span class="string">&#x27;root&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="主从同步配置"><a href="#主从同步配置" class="headerlink" title="主从同步配置"></a>主从同步配置</h3><h4 id="master-配置"><a href="#master-配置" class="headerlink" title="master 配置"></a>master 配置</h4><p>mysql 配置文件 <code>/etc/my.cnf</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务器id，不能重复</span></span><br><span class="line">server-id=1</span><br><span class="line"></span><br><span class="line"><span class="comment"># bin_log配置</span></span><br><span class="line">log_bin=mysql-bin</span><br><span class="line">sync-binlog=1</span><br><span class="line">binlog-ignore-db=information_schema</span><br><span class="line">binlog-ignore-db=mysql</span><br><span class="line">binlog-ignore-db=performance_schema</span><br><span class="line">binlog-ignore-db=sys</span><br><span class="line"></span><br><span class="line"><span class="comment"># relay_log配置</span></span><br><span class="line">relay_log=mysql-relay-bin</span><br><span class="line">log_slave_updates=1</span><br><span class="line">relay_log_purge=0</span><br></pre></td></tr></table></figure>
+
+<p>修改配置后重启 mysql 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart mysqld</span><br></pre></td></tr></table></figure>
+
+<p>配置授权</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; grant replication slave on *.* to root@<span class="string">&#x27;%&#x27;</span> identified by <span class="string">&#x27;root&#x27;</span>;</span><br><span class="line">mysql&gt; grant all privileges on *.* to root@<span class="string">&#x27;%&#x27;</span> identified by <span class="string">&#x27;root&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新加载授权</span></span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line"></span><br><span class="line">mysql&gt; show master status;</span><br><span class="line">+------------------+----------+--------------+-------------------------------------------------+-------------------+</span><br><span class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB                                | Executed_Gtid_Set |</span><br><span class="line">+------------------+----------+--------------+-------------------------------------------------+-------------------+</span><br><span class="line">| mysql-bin.000001 |      869 |              | information_schema,mysql,performance_schema,sys |                   |</span><br><span class="line">+------------------+----------+--------------+-------------------------------------------------+-------------------+</span><br></pre></td></tr></table></figure>
+
+<h4 id="slave-配置"><a href="#slave-配置" class="headerlink" title="slave 配置"></a>slave 配置</h4><p>mysql 配置文件 <code>/etc/my.cnf</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务器id，不能重复</span></span><br><span class="line">server-id=2</span><br><span class="line"></span><br><span class="line"><span class="comment"># bin_log配置</span></span><br><span class="line">log_bin=mysql-bin</span><br><span class="line">sync-binlog=1</span><br><span class="line">binlog-ignore-db=information_schema</span><br><span class="line">binlog-ignore-db=mysql</span><br><span class="line">binlog-ignore-db=performance_schema</span><br><span class="line">binlog-ignore-db=sys</span><br><span class="line"></span><br><span class="line"><span class="comment"># relay_log配置</span></span><br><span class="line">relay_log=mysql-relay-bin</span><br><span class="line">log_slave_updates=1</span><br><span class="line">relay_log_purge=0</span><br><span class="line"></span><br><span class="line">read_only=1</span><br></pre></td></tr></table></figure>
+
+<p>slave 开启同步</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看命令说明</span></span><br><span class="line">mysql&gt; <span class="built_in">help</span> change master to;</span><br><span class="line"></span><br><span class="line">mysql&gt; CHANGE MASTER TO</span><br><span class="line">  MASTER_HOST=<span class="string">&#x27;192.168.56.5&#x27;</span>,</span><br><span class="line">  MASTER_USER=<span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">  MASTER_PASSWORD=<span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">  MASTER_PORT=3306,</span><br><span class="line">  MASTER_LOG_FILE=<span class="string">&#x27;mysql-bin.000001&#x27;</span>,</span><br><span class="line">  MASTER_LOG_POS=869;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启同步</span></span><br><span class="line">mysql&gt; start slave;</span><br></pre></td></tr></table></figure>
+
+<h3 id="半同步复制"><a href="#半同步复制" class="headerlink" title="半同步复制"></a>半同步复制</h3><h4 id="master-安装插件"><a href="#master-安装插件" class="headerlink" title="master 安装插件"></a>master 安装插件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; install plugin rpl_semi_sync_master soname <span class="string">&#x27;semisync_master.so&#x27;</span>;</span><br><span class="line"></span><br><span class="line">mysql&gt; show variables like <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line">+-------------------------------------------+------------+</span><br><span class="line">| Variable_name                             | Value      |</span><br><span class="line">+-------------------------------------------+------------+</span><br><span class="line">| rpl_semi_sync_master_enabled              | OFF        |</span><br><span class="line">| rpl_semi_sync_master_timeout              | 10000      |</span><br><span class="line">| rpl_semi_sync_master_trace_level          | 32         |</span><br><span class="line">| rpl_semi_sync_master_wait_for_slave_count | 1          |</span><br><span class="line">| rpl_semi_sync_master_wait_no_slave        | ON         |</span><br><span class="line">| rpl_semi_sync_master_wait_point           | AFTER_SYNC |</span><br><span class="line">+-------------------------------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p>修改配置文件<code>/etc/my.cnf</code>，添加配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开启半同步复制</span></span><br><span class="line">rpl_semi_sync_master_enabled=ON</span><br><span class="line">rpl_semi_sync_master_timeout=1000</span><br></pre></td></tr></table></figure>
+
+<p>重启 mysql 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart mysqld</span><br></pre></td></tr></table></figure>
+
+<h4 id="slave-安装插件"><a href="#slave-安装插件" class="headerlink" title="slave 安装插件"></a>slave 安装插件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; install plugin rpl_semi_sync_slave soname <span class="string">&#x27;semisync_slave.so&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>修改配置文件<code>/etc/my.cnf</code>，添加配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自动开启半同步复制</span></span><br><span class="line">rpl_semi_sync_slave_enabled=ON</span><br></pre></td></tr></table></figure>
+
+<p>重启 mysql 服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart mysqld</span><br></pre></td></tr></table></figure>
+
+<h4 id="检查半同步复制是否成功"><a href="#检查半同步复制是否成功" class="headerlink" title="检查半同步复制是否成功"></a>检查半同步复制是否成功</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">less /var/<span class="built_in">log</span>/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2020-12-06T02:49:04.711667Z 0 [Note] Slave I/O thread: Start semi-sync replication to master &#x27;root@192.168.56.5:3306&#x27; in log &#x27;mysql-bin.000001&#x27; at position 869</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="MHA-高可用搭建"><a href="#MHA-高可用搭建" class="headerlink" title="MHA 高可用搭建"></a>MHA 高可用搭建</h2><h3 id="ssh-互通"><a href="#ssh-互通" class="headerlink" title="ssh 互通"></a>ssh 互通</h3><p>生成 ssh 秘钥对</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成秘钥对</span></span><br><span class="line">ssh-keygen</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看公钥</span></span><br><span class="line">cat ~/.ssh/id_rsa.pub</span><br><span class="line"><span class="comment"># ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDk6r4vFUA35M8FrxoCq455dTYRV7Lg98MklLJ3P71i3RS0i5vsZGuRB0VbQK6TcThq0gooVMuJy17P8lgXUlc30W+GGg8gqz7yQ1Y7+aktg2iuY45eETFjB+qhzWUtEQsWAJaFEPGrYCSsbE3XCj2JA1w11zIc+PxpKFUzX+JK7MSXIerSv94Q4PGTEeudNc/fHHSothFCAvxF/BdCiZvttPXUJkhuI1RbX5RF46SPfcTOvRn76rCHyntPiE0ZY9eLLtCkAk48XTRV37kxbnoQmvLg7UhNXm1a14q3ZDKCP49YQ52cTihTTBLyPwCwu+HUHQuRLUoXDWj1GBVB6t5Z root@localhost.localdomain</span></span><br></pre></td></tr></table></figure>
+
+<p>每个节点的公钥都要拷贝到另外 3 个节点（4 台服务器两两互通）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh root@192.168.56.5 <span class="string">&#x27;mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys&#x27;</span> &lt; ~/.ssh/id_rsa.pub</span><br><span class="line">ssh root@192.168.56.6 <span class="string">&#x27;mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys&#x27;</span> &lt; ~/.ssh/id_rsa.pub</span><br><span class="line">ssh root@192.168.56.7 <span class="string">&#x27;mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys&#x27;</span> &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<h3 id="MHA-安装"><a href="#MHA-安装" class="headerlink" title="MHA 安装"></a>MHA 安装</h3><p>获取 mha 安装包，mha 分为管理节点和 mysql 节点（ 管理节点需要安装 mha4mysql-manager 和 mha4mysql-node，mysql 节点安装 mha4mysql-node）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/yoshinorim/mha4mysql-node/releases/download/v0.58/mha4mysql-node-0.58-0.el7.centos.noarch.rpm</span><br><span class="line">wget https://github.com/yoshinorim/mha4mysql-manager/releases/download/v0.58/mha4mysql-manager-0.58-0.el7.centos.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<p>安装 mha4mysql-node</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装mha4mysql-node依赖</span></span><br><span class="line">yum install perl-DBD-MySQL -y</span><br><span class="line"></span><br><span class="line">rpm -ivh mha4mysql-node-0.58-0.el7.centos.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<p>mha 管理节点安装 mha4mysql-manager 和 mha4mysql-node</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># perl-Log-Dispatch perl-Parallel-ForkManager在yum仓库找不到</span></span><br><span class="line">wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">yum install perl-DBD-MySQL perl-Config-Tiny perl-Log-Dispatch perl-Parallel- ForkManager -y</span><br><span class="line"></span><br><span class="line">rpm -ivh mha4mysql-node-0.58-0.el7.centos.noarch.rpm</span><br><span class="line">rpm -ivh mha4mysql-manager-0.58-0.el7.centos.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<h3 id="MHA-配置"><a href="#MHA-配置" class="headerlink" title="MHA 配置"></a>MHA 配置</h3><p>MHA Manager 服务器需要为每个监控的 Master/Slave 集群提供一个专用的配置文件，所有集群也可以共享全局配置。</p>
+<p>初始化目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /var/<span class="built_in">log</span>/mha/app1</span><br><span class="line">touch /var/<span class="built_in">log</span>/mha/app1/manager.log</span><br></pre></td></tr></table></figure>
+
+<p>全局配置文件 <code>/etc/masterha_default.cnf</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[server default]</span><br><span class="line">user=root</span><br><span class="line">password=root</span><br><span class="line"><span class="comment"># ssh登录账号</span></span><br><span class="line">ssh_user=root</span><br><span class="line"><span class="comment"># 主从复制账号</span></span><br><span class="line">repl_user=root</span><br><span class="line"><span class="comment"># 主从复制密码</span></span><br><span class="line">repl_password=root</span><br><span class="line"><span class="comment"># ping次数</span></span><br><span class="line">ping_interval=1</span><br><span class="line"><span class="comment"># 二次检查的主机</span></span><br><span class="line">secondary_check_script=masterha_secondary_check -s 192.168.56.5 -s 192.168.56.6 -s 192.168.56.7</span><br></pre></td></tr></table></figure>
+
+<p>mysql 集群监控配置<code>/etc/mha/app1.cnf</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[server default]</span><br><span class="line"><span class="comment"># MHA监控实例根目录</span></span><br><span class="line">manager_workdir=/var/<span class="built_in">log</span>/mha/app1</span><br><span class="line"><span class="comment"># MHA监控实例日志文件</span></span><br><span class="line">manager_log=/var/<span class="built_in">log</span>/mha/app1/manager.log</span><br><span class="line"></span><br><span class="line">[server1]</span><br><span class="line">hostname=192.168.56.5</span><br><span class="line">candidate_master=1</span><br><span class="line">master_binlog_dir=<span class="string">&quot;/var/lib/mysql&quot;</span></span><br><span class="line"></span><br><span class="line">[server2]</span><br><span class="line">hostname=192.168.56.6</span><br><span class="line">candidate_master=1</span><br><span class="line">master_binlog_dir=<span class="string">&quot;/var/lib/mysql&quot;</span></span><br><span class="line"></span><br><span class="line">[server3]</span><br><span class="line">hostname=192.168.56.7</span><br><span class="line">candidate_master=1</span><br><span class="line">master_binlog_dir=<span class="string">&quot;/var/lib/mysql&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>检测配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssh通信检测</span></span><br><span class="line">masterha_check_ssh --conf=/etc/mha/app1.cnf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主从同步检测</span></span><br><span class="line">masterha_check_repl --conf=/etc/mha/app1.cnf</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动-MHA-manager"><a href="#启动-MHA-manager" class="headerlink" title="启动 MHA manager"></a>启动 MHA manager</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">nohup masterha_manager --conf=/etc/mha/app1.cnf --remove_dead_master_conf -- ignore_last_failover &lt; /dev/null &gt; /var/<span class="built_in">log</span>/mha/app1/manager.log 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看mha manager状态</span></span><br><span class="line">masterha_check_status --conf=/etc/mha/app1.cnf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"></span><br><span class="line">tail -f /var/<span class="built_in">log</span>/mha/app1/manager.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql-master-故障测试"><a href="#mysql-master-故障测试" class="headerlink" title="mysql master 故障测试"></a>mysql master 故障测试</h3><p>master 节点执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mysqld</span><br></pre></td></tr></table></figure>
+
+<p>mha manager 日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Tue Dec  1 11:58:33 2020 - [info] New master is 192.168.56.6(192.168.56.6:3306)</span></span><br><span class="line"><span class="comment"># Tue Dec  1 11:58:33 2020 - [info] Starting master failover..</span></span><br><span class="line"><span class="comment"># Tue Dec  1 11:58:33 2020 - [info]</span></span><br><span class="line"><span class="comment"># From:</span></span><br><span class="line"><span class="comment"># 192.168.56.7(192.168.56.7:3306) (current master)</span></span><br><span class="line"><span class="comment">#  +--192.168.56.6(192.168.56.6:3306)</span></span><br><span class="line"><span class="comment">#  +--192.168.56.5(192.168.56.5:3306)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># To:</span></span><br><span class="line"><span class="comment"># 192.168.56.6(192.168.56.6:3306) (new master)</span></span><br><span class="line"><span class="comment">#  +--192.168.56.5(192.168.56.5:3306)</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/10/initrd%E6%A6%82%E8%BF%B0/" rel="prev" title="initrd概述">
+                  <i class="fa fa-chevron-left"></i> initrd概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/02/%E5%9F%BA%E4%BA%8EDocker%E7%9A%84MySQL%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA/" rel="next" title="基于Docker的MySQL主从架构搭建">
+                  基于Docker的MySQL主从架构搭建 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">amaodou</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

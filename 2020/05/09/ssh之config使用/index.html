@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"amaodou.gitee.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.7.1","exturl":false,"sidebar":{"position":"left","width":500,"display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="ssh 使用我们使用简单的 ssh 命令即可登录远程服务器，如ssh root@192.168.10.101（默认使用端口号 22），如果服务器使用的是非标准的端口，则需要指定 ssh 连接端口，如ssh root@192.168.10.101 -p 10022 ssh 命令行选项 123456usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_add">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh之config使用">
+<meta property="og:url" content="http://amaodou.gitee.io/2020/05/09/ssh%E4%B9%8Bconfig%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="amaodou&#39;s lab">
+<meta property="og:description" content="ssh 使用我们使用简单的 ssh 命令即可登录远程服务器，如ssh root@192.168.10.101（默认使用端口号 22），如果服务器使用的是非标准的端口，则需要指定 ssh 连接端口，如ssh root@192.168.10.101 -p 10022 ssh 命令行选项 123456usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_add">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-09T09:51:59.000Z">
+<meta property="article:modified_time" content="2021-09-21T02:28:04.643Z">
+<meta property="article:author" content="amaodou">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://amaodou.gitee.io/2020/05/09/ssh%E4%B9%8Bconfig%E4%BD%BF%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://amaodou.gitee.io/2020/05/09/ssh%E4%B9%8Bconfig%E4%BD%BF%E7%94%A8/","path":"2020/05/09/ssh之config使用/","title":"ssh之config使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ssh之config使用 | amaodou's lab</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">amaodou's lab</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ssh-%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">ssh 使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssh-%E5%88%AB%E5%90%8D"><span class="nav-number">2.</span> <span class="nav-text">ssh 别名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh-config"><span class="nav-number"></span> <span class="nav-text">ssh config</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">amaodou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://amaodou.gitee.io/2020/05/09/ssh%E4%B9%8Bconfig%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="amaodou">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="amaodou's lab">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ssh之config使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-09 17:51:59" itemprop="dateCreated datePublished" datetime="2020-05-09T17:51:59+08:00">2020-05-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-21 10:28:04" itemprop="dateModified" datetime="2021-09-21T10:28:04+08:00">2021-09-21</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="ssh-使用"><a href="#ssh-使用" class="headerlink" title="ssh 使用"></a>ssh 使用</h3><p>我们使用简单的 ssh 命令即可登录远程服务器，如<code>ssh root@192.168.10.101</code>（默认使用端口号 22），如果服务器使用的是非标准的端口，则需要指定 ssh 连接端口，如<code>ssh root@192.168.10.101 -p 10022</code></p>
+<p>ssh 命令行选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]</span><br><span class="line">        [-D [bind_address:]port] [-E log_file] [-e escape_char]</span><br><span class="line">        [-F configfile] [-I pkcs11] [-i identity_file] [-L address]</span><br><span class="line">        [-l login_name] [-m mac_spec] [-O ctl_cmd] [-o option] [-p port]</span><br><span class="line">        [-Q query_option] [-R address] [-S ctl_path] [-W host:port]</span><br><span class="line">        [-w local_tun[:remote_tun]] [user@]hostname [<span class="built_in">command</span>]</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>当远程服务器数量增加到很难记住所有服务器的用户名、远程 ip、命令行选项时，我们该怎么办呢？</p>
+<p>一般有两种方式处理：创建别名指令和使用 config 配置</p>
+<h3 id="ssh-别名"><a href="#ssh-别名" class="headerlink" title="ssh 别名"></a>ssh 别名</h3><p>在<code>~/.bashrc</code>或者<code>~/.zshrc</code>（使用 zsh）文件中添加别名配置，使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;alias dev=ssh root@192.168.10.101 -p 10022&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<h2 id="ssh-config"><a href="#ssh-config" class="headerlink" title="ssh config"></a>ssh config</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ~/.ssh/config 文件内容</span></span><br><span class="line">Host 101</span><br><span class="line">    HostName 192.168.10.101</span><br><span class="line">    User root</span><br><span class="line">    Port 1022</span><br></pre></td></tr></table></figure>
+
+<p>添加上述配置之后，意味着我可以使用<code>ssh 101</code>命令登录 192.168.10.101 服务器。</p>
+<p>也可以配置密钥登录，使用如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ~/.ssh/config 文件内容</span></span><br><span class="line">Host 101</span><br><span class="line">    HostName 192.168.10.101</span><br><span class="line">    User root</span><br><span class="line">    Port 1022</span><br><span class="line"></span><br><span class="line">Host github.com</span><br><span class="line">    HostName github.com</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/github.key</span><br></pre></td></tr></table></figure>
+
+<p>添加上述配置，意味着当我使用 git clone 远程仓库时（比如 <code>git clone git@github.com:amaodou/amaodou.github.io.git</code>），使用密钥 github.key 进行认证。</p>
+<p>注意：如果<code>~/.ssh/config</code>文件不存在时，需要手动创建同时设置文件不能被其他用户访问</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建.ssh目录</span></span><br><span class="line">mkdir -p ~/.ssh &amp;&amp; chmod 700 ~/.ssh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建config文件，设置访问权限</span></span><br><span class="line">touch ~/.ssh/config</span><br><span class="line">chmod 600 ~/.ssh/config</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/09/ali-java%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C%E7%B2%BE%E9%80%89/" rel="prev" title="ali Java开发手册精选">
+                  <i class="fa fa-chevron-left"></i> ali Java开发手册精选
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/09/git%E4%BD%BF%E7%94%A8/" rel="next" title="Git使用">
+                  Git使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">amaodou</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
